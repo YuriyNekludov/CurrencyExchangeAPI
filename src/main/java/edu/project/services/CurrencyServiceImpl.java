@@ -30,7 +30,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         ParameterValidator.areValidCurrencyParameters(code, name, sign);
         code = code.toUpperCase();
         try {
-            Currency currency = currencyDao.addElement(new Currency(code.toUpperCase(), name, sign));
+            Currency currency = currencyDao.addElement(new Currency(code, name, sign));
             return mapCurrencyToDto(currency);
         } catch (SQLException e) {
             if (e.getErrorCode() == 19)
