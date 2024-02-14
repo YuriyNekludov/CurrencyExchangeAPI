@@ -53,7 +53,7 @@ Currency Exchange API - это веб-приложение, предоставл
 4. **Получение текущего курса валюты:**
     - GET /exchangeRate/USDRUB
 5. **Добавление нового курса валют:**
-   - POST /exchangeRates?baseCurrencyCode=1&targetCurrencyCode=2&rate=0.98
+   - POST /exchangeRates?baseCurrencyCode=RUB&targetCurrencyCode=USD&rate=0.98
 6. **Получение списка всех доступных курсов обмена валют:**
     - GET /exchangeRates
 7. **Обновление курса валюты**
