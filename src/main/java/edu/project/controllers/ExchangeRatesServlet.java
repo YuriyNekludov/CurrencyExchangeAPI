@@ -3,7 +3,7 @@ package edu.project.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.project.dto.ExchangeRateDto;
 import edu.project.services.ExchangeRateService;
-import edu.project.services.ExchangeRateServiceImpl;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,8 +15,14 @@ import java.util.List;
 
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
-    private final ExchangeRateService service = ExchangeRateServiceImpl.getExchangeRateService();
-    private final ObjectMapper mapper = new ObjectMapper();
+    private ExchangeRateService service;
+    private ObjectMapper mapper;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        service = (ExchangeRateService) config.getServletContext().getAttribute("rateService");
+        mapper = (ObjectMapper) config.getServletContext().getAttribute("objectMapper");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

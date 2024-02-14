@@ -3,7 +3,7 @@ package edu.project.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.project.dto.CurrencyDto;
 import edu.project.services.CurrencyService;
-import edu.project.services.CurrencyServiceImpl;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,13 +15,19 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
-    private final CurrencyService service = CurrencyServiceImpl.getCurrencyService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private CurrencyService service;
+    private ObjectMapper mapper;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        service = (CurrencyService) config.getServletContext().getAttribute("currencyService");
+        mapper = (ObjectMapper) config.getServletContext().getAttribute("objectMapper");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<CurrencyDto> currencies = service.getAllElements();
-        String jsonResponse = objectMapper.writeValueAsString(currencies);
+        String jsonResponse = mapper.writeValueAsString(currencies);
         resp.getWriter().write(jsonResponse);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
@@ -32,7 +38,7 @@ public class CurrenciesServlet extends HttpServlet {
         String code = req.getParameter("code");
         String sign = req.getParameter("sign");
         CurrencyDto currency = service.addElement(code, name, sign);
-        String jsonResponse = objectMapper.writeValueAsString(currency);
+        String jsonResponse = mapper.writeValueAsString(currency);
         resp.getWriter().write(jsonResponse);
         resp.setStatus(HttpServletResponse.SC_CREATED);
     }
