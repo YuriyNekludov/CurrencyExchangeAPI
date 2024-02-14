@@ -50,7 +50,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                     reverseDto.setBaseCurrency(baseReverse);
                     reverseDto.setTargetCurrency(targetReverse);
                     reverseDto.setRate(BigDecimal.ONE
-                            .setScale(6, RoundingMode.HALF_UP)
+                            .setScale(2, RoundingMode.HALF_UP)
                             .divide(reverseDto.getRate(), RoundingMode.HALF_UP));
                     return reverseDto;
                 } else
@@ -64,7 +64,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     public BigDecimal amountExchange(ExchangeRateDto rate, String amount) {
         BigDecimal amountValue = new BigDecimal(amount);
-        return rate.getRate().setScale(6, RoundingMode.HALF_UP).multiply(amountValue);
+        return rate.getRate().setScale(2, RoundingMode.HALF_UP).multiply(amountValue);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                     baseRate.getTargetCurrency(),
                     targetRate.getTargetCurrency(),
                     baseRate.getRate()
-                            .setScale(6, RoundingMode.HALF_UP)
+                            .setScale(2, RoundingMode.HALF_UP)
                             .divide(targetRate.getRate(), RoundingMode.HALF_UP));
         return mapExchangeRateToDto(crossRate);
     }
