@@ -1,13 +1,17 @@
 package edu.project.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
-@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Getter
+@EqualsAndHashCode
 public class CurrencyDto {
-    private int id;
-    private String code;
-    private String fullName;
-    private String sign;
+    private final int id;
+    private final String code;
+    private final String fullName;
+    private final String sign;
 }

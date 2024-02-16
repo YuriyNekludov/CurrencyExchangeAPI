@@ -106,7 +106,7 @@ public class ExchangeRateJdbcDao implements ExchangeRateDao {
     }
 
     @Override
-    public void updateElement(ExchangeRateDto rate) throws SQLException {
+    public void updateElement(ExchangeRate rate) throws SQLException {
         String sql = "UPDATE exchange_rates SET rate = ? WHERE exchange_rates.id = ?";
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

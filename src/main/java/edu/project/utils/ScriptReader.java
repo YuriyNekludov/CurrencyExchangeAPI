@@ -18,31 +18,40 @@ public class ScriptReader {
     static void initScripts() {
         try (Connection connection = ConnectionManager.getConnection();
              Statement statement = connection.createStatement()) {
-            String currScript = readScriptFromFile("database_init.sql");
-            String currDataScript = readScriptFromFile("data_init.sql");
-            String[] queries = (currScript + currDataScript).split(";");
-            for (String query : queries) {
-                if (!query.trim().isEmpty())
-                    statement.addBatch(query);
-            }
-            statement.executeBatch();
-        } catch (SQLException | URISyntaxException e) {
+            String scripts = readScriptFromFile("database_init.sql")
+                    + readScriptFromFile("data_init.sql");
+            executeQueries(scripts, statement);
+        } catch (SQLException | IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static String readScriptFromFile(String fileName) throws URISyntaxException {
+    static void initDeleteScript() {
+        try (Connection connection = ConnectionManager.getConnection();
+             Statement statement = connection.createStatement()) {
+            String script = readScriptFromFile("clear_tables.sql");
+            executeQueries(script, statement);
+        } catch (SQLException | IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String readScriptFromFile(String fileName) throws IOException, URISyntaxException {
         StringBuilder temp = new StringBuilder();
         Path path = Paths.get(ConnectionManager.class
                 .getClassLoader().getResource("scripts/" + fileName).toURI()).toAbsolutePath();
-        try {
-            List<String> lines = Files.readAllLines(path);
-            for (String line : lines) {
-                temp.append(line).append(System.lineSeparator());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        List<String> lines = Files.readAllLines(path);
+        for (String line : lines)
+            temp.append(line).append(System.lineSeparator());
         return temp.toString();
+    }
+
+    private static void executeQueries(String scripts, Statement statement) throws SQLException {
+        String[] queries = scripts.split(";");
+        for (String query : queries) {
+            if (!query.trim().isEmpty())
+                statement.addBatch(query);
+        }
+        statement.executeBatch();
     }
 }

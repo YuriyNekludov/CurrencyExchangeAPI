@@ -1,10 +1,11 @@
 package edu.project.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.project.services.CurrencyService;
+import edu.project.dto.CurrencyDto;
 import edu.project.services.CurrencyServiceImpl;
 import edu.project.services.ExchangeRateService;
 import edu.project.services.ExchangeRateServiceImpl;
+import edu.project.services.Service;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -18,7 +19,7 @@ public class ApplicationInitializer implements ServletContextListener {
         ConnectionManager.initPool();
         ScriptReader.initScripts();
         ServletContext context = sce.getServletContext();
-        CurrencyService currencyService = CurrencyServiceImpl.getCurrencyService();
+        Service<CurrencyDto> currencyService = CurrencyServiceImpl.getCurrencyService();
         ObjectMapper objectMapper = new ObjectMapper();
         ExchangeRateService rateService = ExchangeRateServiceImpl.getExchangeRateService();
         context.setAttribute("currencyService", currencyService);
@@ -28,6 +29,7 @@ public class ApplicationInitializer implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        ScriptReader.initDeleteScript();
         ConnectionManager.closeConnectionPool();
     }
 }

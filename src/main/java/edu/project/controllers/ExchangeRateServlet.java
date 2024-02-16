@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.project.dto.ExchangeRateDto;
 import edu.project.services.ExchangeRateService;
 import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,13 +17,13 @@ public class ExchangeRateServlet extends HttpServlet {
     private ObjectMapper mapper;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         service = (ExchangeRateService) config.getServletContext().getAttribute("rateService");
         mapper = (ObjectMapper) config.getServletContext().getAttribute("objectMapper");
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String code = getCodeFromUri(req);
         ExchangeRateDto rateDto = service.getElementByCode(code);
         String jsonResponse = mapper.writeValueAsString(rateDto);
@@ -33,7 +32,7 @@ public class ExchangeRateServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String code = getCodeFromUri(req);
         String rate = req.getParameter("rate");
         ExchangeRateDto rateDto = service.updateElement(code, rate);
@@ -44,6 +43,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
     private String getCodeFromUri(HttpServletRequest req) {
         String uri = req.getRequestURI();
-        return uri.substring("/exchangeRate/".length()).toUpperCase();
+        return uri.substring("/exchangeRate/".length());
     }
 }

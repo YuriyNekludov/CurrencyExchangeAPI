@@ -8,26 +8,31 @@ public final class ParameterValidator {
     }
 
     public static void areValidCurrencyParameters(String code, String name, String sign) {
-        if (name == null || sign == null || name.isEmpty() || sign.isEmpty() || !checkValidCode(code))
+        if (name == null || sign == null || name.isEmpty() || sign.isEmpty() || isInvalidCode(code))
+                throw new NoValidParametersException("Введеные поля формы введены некоректно либо отсутствуют.");
+    }
+
+    public static void isValidCurrencyCode(String code) {
+        if (isInvalidCode(code))
             throw new NoValidParametersException("Введеные поля формы введены некоректно либо отсутствуют.");
     }
 
-    public static void isValidCode(String code) {
-        if (!checkValidCode(code))
+    public static void isValidRateCode(String code) {
+        if (code == null || code.length() != 6)
             throw new NoValidParametersException("Введеные поля формы введены некоректно либо отсутствуют.");
     }
 
     public static void areValidRateParameters(String baseCode, String targetCode, String rate) {
-        if (!checkValidCode(baseCode) || !checkValidCode(targetCode) || rate == null || rate.isEmpty())
+        if (isInvalidCode(baseCode) || isInvalidCode(targetCode) || rate == null || rate.isEmpty())
             throw new NoValidParametersException("Введеные поля формы введены некоректно либо отсутствуют.");
     }
 
     public static void areValidRateParameters(String code, String rate) {
-        if (!checkValidCode(code) || rate == null || rate.isEmpty())
+        if (isInvalidCode(code) || rate == null || rate.isEmpty())
             throw new NoValidParametersException("Введеные поля формы введены некоректно либо отсутствуют.");
     }
 
-    private static boolean checkValidCode(String code) {
-        return code != null && !code.isEmpty() && (code.length() == 3 || code.length() == 6);
+    private static boolean isInvalidCode(String code) {
+    return code == null && code.length() != 3;
     }
 }

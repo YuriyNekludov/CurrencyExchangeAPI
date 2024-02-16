@@ -1,16 +1,20 @@
 package edu.project.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Getter
+@EqualsAndHashCode
 public class ExchangeRateDto {
 
-    private int id;
-    private CurrencyDto baseCurrency;
-    private CurrencyDto targetCurrency;
-    private BigDecimal rate;
+    private final int id;
+    private final CurrencyDto baseCurrency;
+    private final CurrencyDto targetCurrency;
+    private final BigDecimal rate;
 }

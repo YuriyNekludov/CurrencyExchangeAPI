@@ -12,5 +12,5 @@ public interface ExchangeRateDao extends Dao<ExchangeRate> {
 
     Optional<ExchangeRate> getElementByCode(String baseCode, String targetCode) throws SQLException;
 
-    void updateElement(ExchangeRateDto rate) throws SQLException;
+    void updateElement(ExchangeRate rate) throws SQLException;
 }

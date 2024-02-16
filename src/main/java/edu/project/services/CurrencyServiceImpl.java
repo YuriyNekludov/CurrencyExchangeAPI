@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyServiceImpl implements CurrencyService {
+public class CurrencyServiceImpl implements Service<CurrencyDto> {
     private static final CurrencyServiceImpl CURRENCY_SERVICE_INSTANCE = new CurrencyServiceImpl();
     private final CurrencyDao currencyDao = CurrencyJdbcDao.getCurrencyDao();
 
@@ -42,7 +42,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public CurrencyDto getElementByCode(String code) {
-        ParameterValidator.isValidCode(code);
+        ParameterValidator.isValidCurrencyCode(code);
         code = code.toUpperCase();
         try {
             Optional<Currency> currency = currencyDao.getElementByCode(code);

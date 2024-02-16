@@ -7,17 +7,18 @@ import java.util.List;
 
 public interface Service<T> {
 
+    T addElement(String value1, String value2, String value3);
+
     T getElementByCode(String code);
 
     List<T> getAllElements();
 
     default CurrencyDto mapCurrencyToDto(Currency currency) {
-        CurrencyDto currencyDto = new CurrencyDto();
-        currencyDto.setId(currency.getId());
-        currencyDto.setCode(currency.getCode());
-        currencyDto.setFullName(currency.getFullName());
-        currencyDto.setSign(currency.getSign());
-        return currencyDto;
+        return new CurrencyDto(
+                currency.getId(),
+                currency.getCode(),
+                currency.getFullName(),
+                currency.getSign());
     }
 
 }

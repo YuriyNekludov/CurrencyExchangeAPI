@@ -44,15 +44,15 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             else {
                 Optional<ExchangeRate> reverseRate = rateDao.getElementByCode(targetCode, baseCode);
                 if (reverseRate.isPresent()) {
-                    ExchangeRateDto reverseDto = mapExchangeRateToDto(reverseRate.get());
-                    CurrencyDto baseReverse = reverseDto.getTargetCurrency();
-                    CurrencyDto targetReverse = reverseDto.getBaseCurrency();
-                    reverseDto.setBaseCurrency(baseReverse);
-                    reverseDto.setTargetCurrency(targetReverse);
-                    reverseDto.setRate(BigDecimal.ONE
+                    ExchangeRate rate = reverseRate.get();
+                    Currency baseReverse = rate.getTargetCurrency();
+                    Currency targetReverse = rate.getBaseCurrency();
+                    rate.setBaseCurrency(baseReverse);
+                    rate.setTargetCurrency(targetReverse);
+                    rate.setRate(BigDecimal.ONE
                             .setScale(2, RoundingMode.HALF_UP)
-                            .divide(reverseDto.getRate(), RoundingMode.HALF_UP));
-                    return reverseDto;
+                            .divide(rate.getRate(), RoundingMode.HALF_UP));
+                    return mapExchangeRateToDto(rate);
                 } else
                     return getCrossCourseRate(baseCode, targetCode);
             }
@@ -71,12 +71,16 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public ExchangeRateDto updateElement(String code, String rate) {
         ParameterValidator.areValidRateParameters(code, rate);
         code = code.toUpperCase();
+        String base = code.substring(0, 3);
+        String target = code.substring(3);
         try {
-            ExchangeRateDto exchangeRate = getElementByCode(code);
+            Optional<ExchangeRate> exchangeRate = rateDao.getElementByCode(base, target);
+            if (exchangeRate.isEmpty())
+                throw new DataNotFoundException("Валютная пара не найдена.");
             BigDecimal newRate = new BigDecimal(rate);
-            exchangeRate.setRate(newRate);
-            rateDao.updateElement(exchangeRate);
-            return exchangeRate;
+            exchangeRate.get().setRate(newRate);
+            rateDao.updateElement(exchangeRate.get());
+            return mapExchangeRateToDto(exchangeRate.get());
         } catch (SQLException e) {
             throw new InternalServerException("База данных недоступна.");
         }
@@ -104,7 +108,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public ExchangeRateDto getElementByCode(String code) {
-        ParameterValidator.isValidCode(code);
+        ParameterValidator.isValidRateCode(code);
         code = code.toUpperCase();
         try {
             String baseCode = code.substring(0, 3);
@@ -162,13 +166,12 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     private ExchangeRateDto mapExchangeRateToDto(ExchangeRate rate) {
-        ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
         CurrencyDto base = mapCurrencyToDto(rate.getBaseCurrency());
         CurrencyDto target = mapCurrencyToDto(rate.getTargetCurrency());
-        exchangeRateDto.setId(rate.getId());
-        exchangeRateDto.setBaseCurrency(base);
-        exchangeRateDto.setTargetCurrency(target);
-        exchangeRateDto.setRate(rate.getRate());
-        return exchangeRateDto;
+        return new ExchangeRateDto(
+                rate.getId(),
+                base,
+                target,
+                rate.getRate());
     }
 }
